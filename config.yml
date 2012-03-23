@@ -1,0 +1,23 @@
+#If this is the host server
+#set this to true.
+host: false
+
+#If this is not the host server, 
+#set the ip of the host
+ip: '0.0.0.0'
+
+
+#Set the port the servers will
+#Communicate on
+port: 33777
+
+
+#Set the prefix to be used before
+#messages sent from this server
+
+prefix: [xserver]
+
+#Server Name
+
+serverName: 'XServer'
+
