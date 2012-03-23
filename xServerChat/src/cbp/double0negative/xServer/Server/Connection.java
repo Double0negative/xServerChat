@@ -67,9 +67,11 @@ public class Connection extends Thread {
 
 
 	public void closeConnection(){
-		try{
-			open = false;
+		open = false;
 
+
+		try{
+			send(new Packet(PacketTypes.PACKET_CC, null));
 			out.close();
 			in.close();
 			skt.close();

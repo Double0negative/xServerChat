@@ -24,7 +24,7 @@ public class Packet implements Serializable {
 	
 	public void setConnection(Connection c){
 		this.c = c;
-	}
+	} 
 	
 	
 	public int getType(){

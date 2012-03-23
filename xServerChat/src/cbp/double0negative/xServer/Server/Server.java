@@ -21,13 +21,13 @@ public class Server extends Thread{
 	private static ArrayList<Connection>clients = new ArrayList<Connection>();
 	ServerSocket skt2;
 	Socket skt;
+	private boolean closed = false;
 	public void run(){
 
 		try{
 			skt2 = new ServerSocket(XServer.port);
-
 		}catch(Exception e){}
-		while(XServer.netActive && !XServer.hostdc){
+		while(!closed){
 
 			try {
 
@@ -49,7 +49,7 @@ public class Server extends Thread{
 
 			}
 			catch(Exception e) {
-				e.printStackTrace();
+				LogManager.getInstance().error("Exception in server");
 			}
 		}
 
@@ -69,7 +69,8 @@ public class Server extends Thread{
 		for(int a = 0; a<clients.size(); a++){
 			Connection i = clients.get(a);
 			stats[a][0] = i.getClientName();
-			stats[a][1] = null;
+			stats[a][1] = i.isOpen();
+			System.out.println(i.getClientName()+i.isOpen());
 			stats[a][2] = i.getSent();
 			stats[a][3] = i.getRecived();
 		}
@@ -78,6 +79,7 @@ public class Server extends Thread{
 	}
 
 	public void closeConnections(){
+		closed = true;
 		try{
 			for(Connection c:clients){
 				c.closeConnection();
@@ -93,10 +95,10 @@ public class Server extends Thread{
 	}
 	public static void closeConnection(Connection c){
 		c.closeConnection();
-		for(int a = 0; a<clients.size(); a++){
+		/*for(int a = 0; a<clients.size(); a++){
 			if(!clients.get(a).isOpen()){
 				clients.remove(a);
 			}
-		}
+		}*/
 	}
 }

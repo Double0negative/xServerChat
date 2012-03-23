@@ -69,16 +69,8 @@ public class XServer extends JavaPlugin{
 		else if(restartMode == PacketTypes.DC_TYPE_STOP){
 			s = " Shutting Down";
 		}
-		if(!dc){
-			client.send(new Packet(PacketTypes.PACKET_MESSAGE, ChatColor.DARK_RED + "[XServer]" +serverName+ " Disconnecting. " + ((!s.equals(""))? "Reason: "+s : "")));
-
-			netActive = false;
-			client.closeConnection();
-		}
-		if(isHost && !hostdc){
-			Server.sendPacket(new Packet(PacketTypes.PACKET_MESSAGE, ChatColor.DARK_RED +"[XServer] Host Disconnecting. " + s), null);
-			server.closeConnections();
-		}
+		dc();
+		dcServer();
 
 	}
 
@@ -108,6 +100,7 @@ public class XServer extends JavaPlugin{
 			LogManager.getInstance().info("Starting as Host");
 			server = new Server();
 			server.start();
+			netActive = true;
 		}
 	}
 
@@ -120,6 +113,7 @@ public class XServer extends JavaPlugin{
 
 	public void reloadServer(){
 		hostdc = false;
+		netActive = false;
 		dc();
 		dcServer();
 		startClient();
@@ -165,9 +159,8 @@ public class XServer extends JavaPlugin{
 							player.sendMessage(xpre+"Already Disconnected!");
 						}
 						else {
-							dcServer();
 							hostdc = true;
-
+							dcServer();
 							player.sendMessage(xpre+"Server Shutdown! Restarting on next restart or with /x host rc");
 						}
 					}
@@ -194,13 +187,14 @@ public class XServer extends JavaPlugin{
 	}
 
 	public static void msgStats(Object[][] stats){
-		stat_req.sendMessage(ChatColor.MAGIC+"--------------XServer Chat Stats----------------");
-		stat_req.sendMessage(ChatColor.YELLOW+"Server            Packets Sent            Packets Recived");
+		stat_req.sendMessage(ChatColor.GOLD+"--------------XServer Chat Stats----------------");
+		stat_req.sendMessage(ChatColor.GOLD+"Server      Active      Packets Sent            Packets Recived");
 		for(Object[] o:stats){
 			String name = addspaces((String)o[0],40);
+			String active = addspaces((Boolean) (o[1])?"true":"false",30);
 			String sent = addspaces(o[2]+"",40);
 			String rec = addspaces(o[3]+"",7);
-			stat_req.sendMessage(ChatColor.YELLOW+name+sent+rec);
+			stat_req.sendMessage(ChatColor.GOLD+name+sent+rec);
 		}
 
 	}

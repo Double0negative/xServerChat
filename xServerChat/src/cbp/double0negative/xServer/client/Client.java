@@ -2,16 +2,16 @@ package cbp.double0negative.xServer.client;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 
+
+import org.bukkit.plugin.Plugin;
+import org.bukkit.ChatColor;
+
 import cbp.double0negative.xServer.XServer;
-import cbp.double0negative.xServer.Server.Server;
 import cbp.double0negative.xServer.packets.Packet;
 import cbp.double0negative.xServer.packets.PacketTypes;
 import cbp.double0negative.xServer.util.LogManager;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.ChatColor;
 
 public class Client extends Thread{
 
@@ -21,6 +21,8 @@ public class Client extends Thread{
 	private ObjectOutputStream out;
 	private Socket skt;
 	private boolean open = false;
+	private boolean closed = false;
+	private long sleep = 2000;
 	private Plugin p;
 	public Client(Plugin p,String ip, int port){
 		this.ip = ip;
@@ -35,7 +37,7 @@ public class Client extends Thread{
 
 	public void run(){
 		boolean error = false;
-		while(XServer.netActive && !XServer.dc){
+		while(!closed){
 			try{
 				LogManager.getInstance().info("Client connection to  "+ip+":"+port);
 				skt = new Socket(ip, port);
@@ -44,6 +46,7 @@ public class Client extends Thread{
 				sendMessage(ChatColor.RED + " Connected");
 				this.p.getServer().broadcastMessage("[XServer]Connected to host");
 			}catch(Exception e){if(!error){LogManager.getInstance().error("Failed to create Socket - Client");}error=true;}
+			sleep = 2000;
 			while(open && !XServer.dc){
 				try{
 					in = new ObjectInputStream(skt.getInputStream());
@@ -52,7 +55,7 @@ public class Client extends Thread{
 					parse(p);
 				}catch(Exception e){LogManager.getInstance().error("Could not read packet");if(open){this.p.getServer().broadcastMessage("[XServer]Lost Connection to Host");}open = false;closeConnection();}
 			}
-			try{sleep(10000);}catch(Exception e){}
+			try{sleep(sleep);sleep = 10000;}catch(Exception e){}
 		}
 	}
 
@@ -64,6 +67,9 @@ public class Client extends Thread{
 			else if(p.getType() == PacketTypes.PACKET_STATS_REPLY){
 				XServer.msgStats((Object[][])p.getArgs());
 			}
+			else if(p.getType() == PacketTypes.PACKET_CC){
+				closeConnection();
+			}
 			else if(p.getType() == PacketTypes.PACKET_SERVER_DC){
 				open = false;
 			}
@@ -73,7 +79,7 @@ public class Client extends Thread{
 			}
 
 		}
-		catch(Exception e){LogManager.getInstance().error("Malformed Packet");e.printStackTrace();}
+		catch(Exception e){LogManager.getInstance().error("Malformed Packet");}
 	}
 	public void sendLocalMessage(String s){
 		p.getServer().broadcastMessage(s);
@@ -91,20 +97,22 @@ public class Client extends Thread{
 
 
 		}
-		catch(Exception e){LogManager.getInstance().error("Couldn't send message");e.printStackTrace();
+		catch(Exception e){LogManager.getInstance().error("Couldn't send message");
 		}
 	}
 
 	public void closeConnection(){
+
+		sendMessage(XServer.prefix +" Closing Connection");
+		send(new Packet(PacketTypes.PACKET_CLIENT_DC,null));
 		try{
 			in.close();
 			out.close();
-			open = false;
 		}
-
 		catch(Exception e ){}
-		sendMessage(XServer.prefix +" Closing Connection");
-		send(new Packet(PacketTypes.PACKET_CLIENT_DC,null));
+		open = false;
+		closed = true;
+
 	}
 }
 
