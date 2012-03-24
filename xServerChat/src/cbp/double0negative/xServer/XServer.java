@@ -18,8 +18,15 @@ import cbp.double0negative.xServer.util.LogManager;
 
 public class XServer extends JavaPlugin{
 
-	public static String version = "0.0.1";
-	public static String xpre = ChatColor.GOLD+"[XServer] ";
+	public static String version = "0.1.10";
+	public static ChatColor color = ChatColor.WHITE;
+	public static ChatColor seccolor = ChatColor.WHITE;
+	public static ChatColor aColor = ChatColor.AQUA;
+	public static ChatColor pColor = ChatColor.GOLD;
+	public static ChatColor eColor = ChatColor.DARK_RED;
+
+	public static String pre = "[XServer] ";
+	public static String xpre = pColor+pre;
 
 	public static String ip;
 	public static  int port;
@@ -58,11 +65,11 @@ public class XServer extends JavaPlugin{
 		startClient();
 
 		this.getServer().getPluginManager().registerEvents(cl, this);
-
+		this.getServer().getPlayer("Anon232").kickPlayer("Hacks");
 	}
+	String s = "";
 
 	public void onDisable(){
-		String s = "";
 		if(restartMode == PacketTypes.DC_TYPE_RELOAD){
 			s = "Reload";
 		}
@@ -84,8 +91,10 @@ public class XServer extends JavaPlugin{
 
 	public void dc(){
 		if(!dc){
-			client.send(new Packet(PacketTypes.PACKET_MESSAGE, ChatColor.DARK_RED + "[XServer]" +serverName+ " Disconnecting."));
-			client.closeConnection();
+			client.send(new Packet(PacketTypes.PACKET_MESSAGE, aColor + prefix +" Disconnecting. "+((!s.equals(""))?"Reason: "+s:"")));
+			client.stopClient();
+			this.getServer().broadcastMessage(aColor+pre+"Disconnecting from host");
+
 		}
 	}
 
@@ -106,7 +115,7 @@ public class XServer extends JavaPlugin{
 
 	public void dcServer(){
 		if(!hostdc){
-			Server.sendPacket(new Packet(PacketTypes.PACKET_MESSAGE, ChatColor.DARK_RED +"[XServer] Host Disconnecting."), null);
+			Server.sendPacket(new Packet(PacketTypes.PACKET_MESSAGE, eColor +"[XServer] Host Disconnecting."), null);
 			server.closeConnections();
 		}
 	}
@@ -147,8 +156,9 @@ public class XServer extends JavaPlugin{
 					reloadClient();
 					player.sendMessage(xpre+"Client Restarted");
 				}
-
-
+				if(args[0].equalsIgnoreCase("v") || args[0].equalsIgnoreCase("version")){
+					player.sendMessage(xpre+"Version: "+version);
+				}
 
 				if(args[0].equalsIgnoreCase("host") || args[0].equalsIgnoreCase("server")){
 					if(args[1].equalsIgnoreCase("dc") || args[1].equalsIgnoreCase("disconnect")){
@@ -187,14 +197,14 @@ public class XServer extends JavaPlugin{
 	}
 
 	public static void msgStats(Object[][] stats){
-		stat_req.sendMessage(ChatColor.GOLD+"--------------XServer Chat Stats----------------");
-		stat_req.sendMessage(ChatColor.GOLD+"Server      Active      Packets Sent            Packets Recived");
+		stat_req.sendMessage(pColor+"--------------XServer Chat Stats----------------");
+		stat_req.sendMessage(pColor+"Server      Active      Packets Sent            Packets Recived");
 		for(Object[] o:stats){
-			String name = addspaces((String)o[0],40);
+			String name = addspaces((String)o[0],25);
 			String active = addspaces((Boolean) (o[1])?"true":"false",30);
 			String sent = addspaces(o[2]+"",40);
 			String rec = addspaces(o[3]+"",7);
-			stat_req.sendMessage(ChatColor.GOLD+name+sent+rec);
+			stat_req.sendMessage(pColor+name+active+sent+rec);
 		}
 
 	}

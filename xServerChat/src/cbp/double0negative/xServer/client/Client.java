@@ -22,6 +22,7 @@ public class Client extends Thread{
 	private Socket skt;
 	private boolean open = false;
 	private boolean closed = false;
+	private int errLevel = 0;
 	private long sleep = 2000;
 	private Plugin p;
 	public Client(Plugin p,String ip, int port){
@@ -43,17 +44,20 @@ public class Client extends Thread{
 				skt = new Socket(ip, port);
 				open = true;
 				send(new Packet(PacketTypes.PACKET_SERVER_NAME, XServer.serverName));
-				sendMessage(ChatColor.RED + " Connected");
-				this.p.getServer().broadcastMessage("[XServer]Connected to host");
+				send(new Packet(PacketTypes.PACKET_MESSAGE,XServer.aColor+  XServer.prefix+ " Connected"));
+				this.p.getServer().broadcastMessage(XServer.aColor+"[XServer]Connected to host");
+				
 			}catch(Exception e){if(!error){LogManager.getInstance().error("Failed to create Socket - Client");}error=true;}
 			sleep = 2000;
+			
 			while(open && !XServer.dc){
 				try{
 					in = new ObjectInputStream(skt.getInputStream());
 
 					Packet p = (Packet)in.readObject();
 					parse(p);
-				}catch(Exception e){LogManager.getInstance().error("Could not read packet");if(open){this.p.getServer().broadcastMessage("[XServer]Lost Connection to Host");}open = false;closeConnection();}
+					errLevel = 0;
+				}catch(Exception e){LogManager.getInstance().error("Could not read packet");if(open){this.p.getServer().broadcastMessage(XServer.eColor+"[XServer]Lost Connection to Host");}open = false;}
 			}
 			try{sleep(sleep);sleep = 10000;}catch(Exception e){}
 		}
@@ -77,6 +81,9 @@ public class Client extends Thread{
 				String s = (p.getType() == PacketTypes.PACKET_PLAYER_JOIN)? " joined the game": " left the game";
 				sendLocalMessage((String)p.getArgs() + s);
 			}
+			else if(p.getType() == PacketTypes.PACKET_PLAYER_DEATH){
+				sendLocalMessage((String)p.getArgs() + " Died");
+			}
 
 		}
 		catch(Exception e){LogManager.getInstance().error("Malformed Packet");}
@@ -86,7 +93,7 @@ public class Client extends Thread{
 	}
 
 	public void sendMessage(String s){
-		s = XServer.prefix+s;
+		s = XServer.color+ XServer.prefix+XServer.seccolor+ s;
 		send(new Packet(PacketTypes.PACKET_MESSAGE, s));
 	}
 
@@ -103,7 +110,6 @@ public class Client extends Thread{
 
 	public void closeConnection(){
 
-		sendMessage(XServer.prefix +" Closing Connection");
 		send(new Packet(PacketTypes.PACKET_CLIENT_DC,null));
 		try{
 			in.close();
@@ -111,8 +117,13 @@ public class Client extends Thread{
 		}
 		catch(Exception e ){}
 		open = false;
-		closed = true;
 
 	}
+	
+	public void stopClient(){
+		closeConnection();
+		closed = true;
+	}
+	
 }
 

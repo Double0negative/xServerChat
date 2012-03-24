@@ -30,7 +30,7 @@ public class Connection extends Thread {
 			try {
 				in = new ObjectInputStream(skt.getInputStream());
 				parse((Packet) in.readObject());
-				recived++;
+				sent++;
 			} catch (Exception e) {}
 		}
 
@@ -40,7 +40,7 @@ public class Connection extends Thread {
 		try {
 			out = new ObjectOutputStream(skt.getOutputStream());
 			out.writeObject(p);
-			sent++;
+			recived++;
 		} catch (Exception e) {
 		}
 	}
@@ -59,7 +59,7 @@ public class Connection extends Thread {
 		else if(p.getType() == PacketTypes.PACKET_CLIENT_DC){
 			Server.closeConnection(this);
 		}
-		else if(p.getType() == PacketTypes.PACKET_PLAYER_JOIN || p.getType() == PacketTypes.PACKET_PLAYER_LEAVE){
+		else if(p.getType() == PacketTypes.PACKET_PLAYER_JOIN || p.getType() == PacketTypes.PACKET_PLAYER_LEAVE ||p.getType() == PacketTypes.PACKET_PLAYER_DEATH){
 			Server.sendPacket(p, this);
 		}
 
