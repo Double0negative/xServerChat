@@ -15,7 +15,13 @@ import cbp.double0negative.xServer.client.Client;
 import cbp.double0negative.xServer.packets.Packet;
 import cbp.double0negative.xServer.packets.PacketTypes;
 import cbp.double0negative.xServer.util.LogManager;
-
+/**
+ * 
+ * Authors:
+ * @author James [ https://github.com/James-Buchanan ]
+ * @author Drew  [ https://github.com/Double0negative ]
+ * 
+ */
 public class XServer extends JavaPlugin{
 
 	public static String version = "0.1.10";
@@ -43,7 +49,7 @@ public class XServer extends JavaPlugin{
 	private static Player stat_req = null;
 
 	private ChatListener cl = new ChatListener();
-
+//
 	public void onEnable(){
 		netActive = true;
 		LogManager log = LogManager.getInstance();
