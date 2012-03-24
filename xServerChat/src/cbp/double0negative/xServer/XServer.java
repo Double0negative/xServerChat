@@ -30,10 +30,8 @@ public class XServer extends JavaPlugin{
 	public static ChatColor aColor = ChatColor.AQUA;
 	public static ChatColor pColor = ChatColor.GOLD;
 	public static ChatColor eColor = ChatColor.DARK_RED;
-
 	public static String pre = "[XServer] ";
 	public static String xpre = pColor+pre;
-
 	public static String ip;
 	public static  int port;
 	public static String prefix;
@@ -41,7 +39,6 @@ public class XServer extends JavaPlugin{
 	public static boolean isHost = false;
 	private Server server;
 	private Client client;
-
 	public static boolean netActive = true;
 	public static int restartMode = 0;
 	public static boolean dc = false;
@@ -71,7 +68,6 @@ public class XServer extends JavaPlugin{
 		startClient();
 
 		this.getServer().getPluginManager().registerEvents(cl, this);
-		this.getServer().getPlayer("Anon232").kickPlayer("Hacks");
 	}
 	String s = "";
 
