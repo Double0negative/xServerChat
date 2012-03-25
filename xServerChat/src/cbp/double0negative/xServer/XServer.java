@@ -1,11 +1,10 @@
 package cbp.double0negative.xServer;
 
-import java.util.logging.Logger;
+import java.io.File;
 
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
-
 import org.bukkit.ChatColor;
 
 
@@ -17,9 +16,12 @@ import cbp.double0negative.xServer.packets.PacketTypes;
 import cbp.double0negative.xServer.util.LogManager;
 /**
  * 
+ * @
+ * 
+ * 
  * Authors:
- * @author James [ https://github.com/James-Buchanan ]
  * @author Drew  [ https://github.com/Double0negative ]
+ * @author James [ https://github.com/James-Buchanan ]
  * 
  */
 public class XServer extends JavaPlugin{
@@ -44,22 +46,47 @@ public class XServer extends JavaPlugin{
 	public static boolean dc = false;
 	public static boolean hostdc = false;
 	private static Player stat_req = null;
-
 	private ChatListener cl = new ChatListener();
-//
+	
+	
+	
+		
+	
 	public void onEnable(){
+		try
+		{
+			File file = new File("plugins/XServer/config.yml");
+			FileConfiguration cfg = getConfig();
+			
+			if(!file.exists())
+			{
+				cfg.options().header("Header Here!");
+				cfg.addDefault("XServer.Host", false);
+				cfg.addDefault("XServer.IP", "0.0.0.0");
+				cfg.addDefault("XServer.Port", 33777);
+				cfg.addDefault("XServer.Prefix", "{prefix}");
+			}
+		}
+		catch(Exception e){}
+		
+		
+		
+		
 		netActive = true;
 		LogManager log = LogManager.getInstance();
 		log.setup(this);
 		log.info("XServer Version "+version+" Initializing");
+		/**
 
 		getConfig().options().copyDefaults(true);
 		this.saveDefaultConfig();
-		ip = getConfig().getString("ip");
+		/*ip = getConfig().getString("ip");
 		port = getConfig().getInt("port");
 		prefix = getConfig().getString("prefix");
 		isHost = getConfig().getBoolean("host");
 		serverName = getConfig().getString("serverName");
+		*/ // ok
+		
 
 		if(isHost){
 			startServer();
@@ -71,7 +98,8 @@ public class XServer extends JavaPlugin{
 	}
 	String s = "";
 
-	public void onDisable(){
+	public void onDisable()
+	{
 		if(restartMode == PacketTypes.DC_TYPE_RELOAD){
 			s = "Reload";
 		}
@@ -97,7 +125,9 @@ public class XServer extends JavaPlugin{
 			client.stopClient();
 			this.getServer().broadcastMessage(aColor+pre+"Disconnecting from host");
 
-		}
+		
+	}
+	
 	}
 
 	public void reloadClient(){
@@ -113,6 +143,7 @@ public class XServer extends JavaPlugin{
 			server.start();
 			netActive = true;
 		}
+	
 	}
 
 	public void dcServer(){
@@ -216,5 +247,9 @@ public class XServer extends JavaPlugin{
 			s = s+" ";
 		}
 		return s;
+	}
+	
+	public static String format(String key, String s){
+	    return null;
 	}
 }

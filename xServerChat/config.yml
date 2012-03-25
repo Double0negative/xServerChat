@@ -21,3 +21,13 @@ prefix: [xserver]
 
 serverName: 'XServer'
 
+
+#Formats Changes these to customize the
+#way the chat looks
+
+login: {server}{user} has joined the game
+logout: {server}{user} has left the game
+Message: {server}{user}: {message}
+death: {server}{user} died
+
+
