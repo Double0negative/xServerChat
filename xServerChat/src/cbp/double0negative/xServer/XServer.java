@@ -53,7 +53,7 @@ public class XServer extends JavaPlugin{
 		
 	
 	public void onEnable(){
-		try
+		/*try
 		{
 			File file = new File("plugins/XServer/config.yml");
 			FileConfiguration cfg = getConfig();
@@ -67,7 +67,7 @@ public class XServer extends JavaPlugin{
 				cfg.addDefault("XServer.Prefix", "{prefix}");
 			}
 		}
-		catch(Exception e){}
+		catch(Exception e){}*/
 		
 		
 		
@@ -76,16 +76,16 @@ public class XServer extends JavaPlugin{
 		LogManager log = LogManager.getInstance();
 		log.setup(this);
 		log.info("XServer Version "+version+" Initializing");
-		/**
+		
 
 		getConfig().options().copyDefaults(true);
 		this.saveDefaultConfig();
-		/*ip = getConfig().getString("ip");
+		ip = getConfig().getString("ip");
 		port = getConfig().getInt("port");
 		prefix = getConfig().getString("prefix");
 		isHost = getConfig().getBoolean("host");
 		serverName = getConfig().getString("serverName");
-		*/ // ok
+	
 		
 
 		if(isHost){
