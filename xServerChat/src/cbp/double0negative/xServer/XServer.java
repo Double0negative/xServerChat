@@ -1,8 +1,11 @@
 package cbp.double0negative.xServer;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.ChatColor;
@@ -47,7 +50,7 @@ public class XServer extends JavaPlugin{
 	public static boolean hostdc = false;
 	private static Player stat_req = null;
 	private ChatListener cl = new ChatListener();
-	
+	public static HashMap<String, String>formats = new HashMap<String,String>();
 	
 	
 		
@@ -86,7 +89,11 @@ public class XServer extends JavaPlugin{
 		isHost = getConfig().getBoolean("host");
 		serverName = getConfig().getString("serverName");
 	
-		
+		formats.put("MESSAGE", getConfig().getString("formats.message"));
+	    formats.put("LOGIN", getConfig().getString("formats.login"));
+	    formats.put("LOGOUT", getConfig().getString("formats.logout"));
+	    formats.put("DEATH", getConfig().getString("formats.death"));
+
 
 		if(isHost){
 			startServer();
@@ -100,6 +107,11 @@ public class XServer extends JavaPlugin{
 
 	public void onDisable()
 	{
+	    
+	       hostdc = false;
+	        netActive = false;
+	        dc = false;
+
 		if(restartMode == PacketTypes.DC_TYPE_RELOAD){
 			s = "Reload";
 		}
@@ -162,7 +174,7 @@ public class XServer extends JavaPlugin{
 		startServer();
 	}
 
-	public boolean onCommand(org.bukkit.command.CommandSender sender, org.bukkit.command.Command cmd1, String commandLabel, String[] args){
+	public boolean onCommand(CommandSender sender, Command cmd1, String commandLabel, String[] args){
 		String cmd = cmd1.getName();
 		Player player = null;
 		if (sender instanceof Player) {
@@ -249,7 +261,5 @@ public class XServer extends JavaPlugin{
 		return s;
 	}
 	
-	public static String format(String key, String s){
-	    return null;
-	}
+
 }

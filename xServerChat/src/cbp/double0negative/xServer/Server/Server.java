@@ -49,7 +49,7 @@ public class Server extends Thread{
 
 			}
 			catch(Exception e) {
-				LogManager.getInstance().error("Exception in server");
+				LogManager.getInstance().error("Exception in server"); e.printStackTrace();try{sleep(10000);}catch(Exception e2){}
 			}
 		}
 

@@ -5,6 +5,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
+import cbp.double0negative.xServer.XServer;
 import cbp.double0negative.xServer.packets.Packet;
 import cbp.double0negative.xServer.packets.PacketTypes;
 
@@ -90,4 +92,10 @@ public class Connection extends Thread {
 	public int getRecived(){
 		return recived;
 	}
+	   public static String format(String key, String s){
+	       XServer.formats.get(key);
+	       
+	        s = s.replaceAll("{server}", arg1)
+	        return null;
+	    }
 }

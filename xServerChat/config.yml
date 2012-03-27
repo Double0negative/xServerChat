@@ -23,11 +23,15 @@ serverName: 'XServer'
 
 
 #Formats Changes these to customize the
-#way the chat looks
-
-login: {server}{user} has joined the game
-logout: {server}{user} has left the game
-Message: {server}{user}: {message}
-death: {server}{user} died
+#way messages COMMING FROM your server look
+#Note: this means that the messages on your server
+#won't look like this but the messages on the OTHER
+#servers. this allows you to customize the look
+#of your server.
+formats:
+	login: [{server}]{user} has joined the game
+	logout: [{server}]{user} has left the game
+	Message: [{server}]{user}: {message}
+	death: [{server}]{user} died
 
 
