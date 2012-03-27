@@ -29,7 +29,7 @@ import cbp.double0negative.xServer.util.LogManager;
  */
 public class XServer extends JavaPlugin{
 
-	public static String version = "0.1.10";
+	public static String version = "0.1.11";
 	public static ChatColor color = ChatColor.WHITE;
 	public static ChatColor seccolor = ChatColor.WHITE;
 	public static ChatColor aColor = ChatColor.AQUA;
