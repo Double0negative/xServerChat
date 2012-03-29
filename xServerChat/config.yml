@@ -6,11 +6,9 @@ host: false
 #set the ip of the host
 ip: '0.0.0.0'
 
-
 #Set the port the servers will
 #Communicate on
 port: 33777
-
 
 #Set the prefix to be used before
 #messages sent from this server
@@ -29,9 +27,8 @@ serverName: 'XServer'
 #servers. this allows you to customize the look
 #of your server.
 formats:
-	login: [{server}]{user} has joined the game
-	logout: [{server}]{user} has left the game
-	Message: [{server}]{user}: {message}
-	death: [{server}]{user} died
-
+  Login: '[{server}]{user} has joined the game'
+  Logout: '[{server}]{user} has left the game'
+  Message: '[{server}]{user}: {message}'
+  Death: '[{server}]{user} died'
 

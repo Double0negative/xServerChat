@@ -29,7 +29,7 @@ import cbp.double0negative.xServer.util.LogManager;
  */
 public class XServer extends JavaPlugin{
 
-	public static String version = "0.1.11";
+	public static String version = "0.1.13";
 	public static ChatColor color = ChatColor.WHITE;
 	public static ChatColor seccolor = ChatColor.WHITE;
 	public static ChatColor aColor = ChatColor.AQUA;
@@ -52,7 +52,6 @@ public class XServer extends JavaPlugin{
 	private ChatListener cl = new ChatListener();
 	public static HashMap<String, String>formats = new HashMap<String,String>();
 	
-	
 		
 	
 	public void onEnable(){
@@ -72,8 +71,7 @@ public class XServer extends JavaPlugin{
 		}
 		catch(Exception e){}*/
 		
-		
-		
+
 		
 		netActive = true;
 		LogManager log = LogManager.getInstance();
@@ -139,6 +137,9 @@ public class XServer extends JavaPlugin{
 
 		
 	}
+		
+		
+
 	
 	}
 
@@ -180,6 +181,7 @@ public class XServer extends JavaPlugin{
 		if (sender instanceof Player) {
 			player = (Player) sender;
 		}
+		ChatColor.translateAlternateColorCodes('&', "");	         
 		if(cmd.equalsIgnoreCase("xserver") || cmd.equalsIgnoreCase("x")){ 
 			if(args[0].equalsIgnoreCase("list")){
 				stat_req = player;
@@ -261,5 +263,17 @@ public class XServer extends JavaPlugin{
 		return s;
 	}
 	
+	public static String format(HashMap<String, String> val, String key){
+	    String str = formats.get(key);
+	    
+	    str = str.replaceAll("{message}", val.get("MESSAGE"));
+	    str = str.replaceAll("{username}", val.get("USERNAME"));
+	    str = str.replaceAll("{server}", val.get("SERVERNAME"));
+	    
+	    str = ChatColor.translateAlternateColorCodes('&', str);
+	    
+	    System.out.println(str);
+	    return str;
+	}
 
 }

@@ -3,6 +3,7 @@ package cbp.double0negative.xServer.client;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 
 import org.bukkit.plugin.Plugin;
@@ -66,7 +67,8 @@ public class Client extends Thread{
 	public void parse(Packet p){
 		try{
 			if(p.getType() == PacketTypes.PACKET_MESSAGE){
-				sendLocalMessage((String)p.getArgs());
+			    HashMap<String,String> form = (HashMap<String,String>) p.getArgs();
+				sendLocalMessage(XServer.format(form, "MESSAGE"));
 			}
 			else if(p.getType() == PacketTypes.PACKET_STATS_REPLY){
 				XServer.msgStats((Object[][])p.getArgs());
@@ -92,9 +94,14 @@ public class Client extends Thread{
 		p.getServer().broadcastMessage(s);
 	}
 
-	public void sendMessage(String s){
-		s = XServer.color+ XServer.prefix+XServer.seccolor+ s;
-		send(new Packet(PacketTypes.PACKET_MESSAGE, s));
+	public void sendMessage(String s,String user){
+		HashMap<String, String>f = new HashMap<String,String>();
+		f.put("MESSAGE", s);
+		f.put("SERVERNAME",XServer.serverName );
+		f.put("USERNAME",user);
+		
+		
+		send(new Packet(PacketTypes.PACKET_MESSAGE, f));
 	}
 
 	public void send(Packet p){
