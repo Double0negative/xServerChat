@@ -1,5 +1,7 @@
 package cbp.double0negative.xServer.client;
 
+import java.util.HashMap;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -24,7 +26,7 @@ public class ChatListener implements Listener{
     @EventHandler(priority = EventPriority.MONITOR)
     public void handleChat(PlayerChatEvent event){
     	
-    	c.sendMessage(event.getPlayer().getDisplayName()+": "+event.getMessage());
+    	c.sendMessage(event.getMessage(), event.getPlayer().getDisplayName());
     	
     }
     
@@ -43,22 +45,33 @@ public class ChatListener implements Listener{
     @EventHandler(priority = EventPriority.MONITOR)
     public void handlePlayerJoin(PlayerJoinEvent	event){
     	
-    	c.send(new Packet(PacketTypes.PACKET_PLAYER_JOIN, XServer.prefix + " "+event.getPlayer().getDisplayName()));
+        
+        HashMap<String, String> f = new HashMap<String, String>();
+        
+        f.put("USERNAME", event.getPlayer().getDisplayName());
+        f.put("SERVERNAME", XServer.serverName);
+    	c.send(new Packet(PacketTypes.PACKET_PLAYER_JOIN,f ));
     	
     }
     
     @EventHandler(priority = EventPriority.MONITOR)
     public void handlePlayerLeave(PlayerQuitEvent	event){
     	
-    	c.send(new Packet(PacketTypes.PACKET_PLAYER_LEAVE, XServer.prefix + " "+event.getPlayer().getDisplayName()));
-    	
+        HashMap<String, String> f = new HashMap<String, String>();
+        
+        f.put("USERNAME", event.getPlayer().getDisplayName());
+        f.put("SERVERNAME", XServer.serverName);
+        c.send(new Packet(PacketTypes.PACKET_PLAYER_LEAVE,f ));    	
     }
     
     @EventHandler(priority = EventPriority.MONITOR)
-    public void handlePlayerLeave(PlayerDeathEvent	event){
+    public void handlePlayerDeath(PlayerDeathEvent	event){
     	
-    	c.sendMessage(event.getEntity().getDisplayName() + " Died");
-    	
+        HashMap<String, String> f = new HashMap<String, String>();
+        
+        f.put("USERNAME", event.getEntity().getDisplayName());
+        f.put("SERVERNAME", XServer.serverName);
+        c.send(new Packet(PacketTypes.PACKET_PLAYER_DEATH,f ));    	
     }
     
    

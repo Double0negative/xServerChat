@@ -41,12 +41,13 @@ public class Client extends Thread{
 		boolean error = false;
 		while(!closed){
 			try{
-				LogManager.getInstance().info("Client connection to  "+ip+":"+port);
 				skt = new Socket(ip, port);
 				open = true;
-				send(new Packet(PacketTypes.PACKET_SERVER_NAME, XServer.serverName));
-				send(new Packet(PacketTypes.PACKET_MESSAGE,XServer.aColor+  XServer.prefix+ " Connected"));
-				this.p.getServer().broadcastMessage(XServer.aColor+"[XServer]Connected to host");
+				//send(new Packet(PacketTypes.PACKET_SERVER_NAME,XServer.serverName ));
+				send(new Packet(PacketTypes.PACKET_CLIENT_CONNECTED,XServer.serverName));
+				sendLocalMessage(XServer.aColor+"[XServer]Connected to host");
+                LogManager.getInstance().info("Client connection to  "+ip+":"+port);
+
 				
 			}catch(Exception e){if(!error){LogManager.getInstance().error("Failed to create Socket - Client");}error=true;}
 			sleep = 2000;
@@ -54,7 +55,6 @@ public class Client extends Thread{
 			while(open && !XServer.dc){
 				try{
 					in = new ObjectInputStream(skt.getInputStream());
-
 					Packet p = (Packet)in.readObject();
 					parse(p);
 					errLevel = 0;
@@ -68,7 +68,7 @@ public class Client extends Thread{
 		try{
 			if(p.getType() == PacketTypes.PACKET_MESSAGE){
 			    HashMap<String,String> form = (HashMap<String,String>) p.getArgs();
-				sendLocalMessage(XServer.format(form, "MESSAGE"));
+				sendLocalMessage(XServer.format(p.getFormat(),form, "MESSAGE"));
 			}
 			else if(p.getType() == PacketTypes.PACKET_STATS_REPLY){
 				XServer.msgStats((Object[][])p.getArgs());
@@ -80,15 +80,25 @@ public class Client extends Thread{
 				open = false;
 			}
 			else if(p.getType() == PacketTypes.PACKET_PLAYER_JOIN || p.getType() == PacketTypes.PACKET_PLAYER_LEAVE){
-				String s = (p.getType() == PacketTypes.PACKET_PLAYER_JOIN)? " joined the game": " left the game";
-				sendLocalMessage((String)p.getArgs() + s);
+				String s = (p.getType() == PacketTypes.PACKET_PLAYER_JOIN)? "LOGOUT": "LOGIN";
+				sendLocalMessage(XServer.format(p.getFormat(),(HashMap<String, String>) p.getArgs(), s));
 			}
 			else if(p.getType() == PacketTypes.PACKET_PLAYER_DEATH){
-				sendLocalMessage((String)p.getArgs() + " Died");
+                sendLocalMessage(XServer.format(p.getFormat(),(HashMap<String, String>) p.getArgs(), "DEATH"));
 			}
+			else if(p.getType() == PacketTypes.PACKET_CLIENT_CONNECTED){
+	             HashMap<String,String> form =new HashMap<String,String>();
+	             form.put("SERVERNAME", (String) p.getArgs());
+			    sendLocalMessage(XServer.format(p.getFormat(), form, "CONNECTI"));
+			}
+	         else if(p.getType() == PacketTypes.PACKET_CLIENT_DC){
+                 HashMap<String,String> form =new HashMap<String,String>();
+                 form.put("SERVERNAME", (String) p.getArgs());
+                sendLocalMessage(XServer.format(p.getFormat(), form, "DISCONNECT"));
+            }
 
 		}
-		catch(Exception e){LogManager.getInstance().error("Malformed Packet");}
+		catch(Exception e){LogManager.getInstance().error("Malformed Packet");e.printStackTrace();}
 	}
 	public void sendLocalMessage(String s){
 		p.getServer().broadcastMessage(s);
@@ -106,6 +116,7 @@ public class Client extends Thread{
 
 	public void send(Packet p){
 		try{
+		    p.setFormat(XServer.formats);
 			out = new ObjectOutputStream(skt.getOutputStream());
 			out.writeObject(p);
 

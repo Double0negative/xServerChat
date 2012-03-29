@@ -51,28 +51,12 @@ public class XServer extends JavaPlugin{
 	private static Player stat_req = null;
 	private ChatListener cl = new ChatListener();
 	public static HashMap<String, String>formats = new HashMap<String,String>();
-	
+	public static HashMap<String, String>override = new HashMap<String,String>();
+    private static boolean formatoveride = false;
 		
 	
 	public void onEnable(){
-		/*try
-		{
-			File file = new File("plugins/XServer/config.yml");
-			FileConfiguration cfg = getConfig();
-			
-			if(!file.exists())
-			{
-				cfg.options().header("Header Here!");
-				cfg.addDefault("XServer.Host", false);
-				cfg.addDefault("XServer.IP", "0.0.0.0");
-				cfg.addDefault("XServer.Port", 33777);
-				cfg.addDefault("XServer.Prefix", "{prefix}");
-			}
-		}
-		catch(Exception e){}*/
-		
 
-		
 		netActive = true;
 		LogManager log = LogManager.getInstance();
 		log.setup(this);
@@ -87,12 +71,25 @@ public class XServer extends JavaPlugin{
 		isHost = getConfig().getBoolean("host");
 		serverName = getConfig().getString("serverName");
 	
-		formats.put("MESSAGE", getConfig().getString("formats.message"));
-	    formats.put("LOGIN", getConfig().getString("formats.login"));
-	    formats.put("LOGOUT", getConfig().getString("formats.logout"));
-	    formats.put("DEATH", getConfig().getString("formats.death"));
+		formats.put("MESSAGE", getConfig().getString("formats.Message"));
+	    formats.put("LOGIN", getConfig().getString("formats.Login"));
+	    formats.put("LOGOUT", getConfig().getString("formats.Logout"));
+	    formats.put("DEATH", getConfig().getString("formats.Death"));
+        formats.put("CONNECT", getConfig().getString("formats.Connect"));
+        formats.put("DISCONNECT", getConfig().getString("formats.Disconnect"));
 
+	    
+	    formatoveride = getConfig().getBoolean("override.enabled");
+        override.put("MESSAGE", getConfig().getString("override.Message"));
+        override.put("LOGIN", getConfig().getString("override.Login"));
+        override.put("LOGOUT", getConfig().getString("override.Logout"));
+        override.put("DEATH", getConfig().getString("override.Death"));
+        override.put("CONNECT", getConfig().getString("override.Connect"));
+        override.put("DISCONNECT", getConfig().getString("override.Disconnect"));
 
+	    
+	    
+	    
 		if(isHost){
 			startServer();
 		}
@@ -263,14 +260,21 @@ public class XServer extends JavaPlugin{
 		return s;
 	}
 	
-	public static String format(HashMap<String, String> val, String key){
-	    String str = formats.get(key);
+	public static String format(   HashMap<String, String>format, HashMap<String, String> val, String key){
+	    String str = "";
+	    if(!formatoveride){
+	       str = format.get(key);
+	    }else{
+	       str = override.get(key);
+	    }
+	    System.out.println(formatoveride);
+	    System.out.println(str);
 	    
-	    str = str.replaceAll("{message}", val.get("MESSAGE"));
-	    str = str.replaceAll("{username}", val.get("USERNAME"));
-	    str = str.replaceAll("{server}", val.get("SERVERNAME"));
+	    str = str.replaceAll("\\{message\\}",(val.get("MESSAGE") != null)? val.get("MESSAGE"): "");
+	    str = str.replaceAll("\\{username\\}", (val.get("USERNAME") != null)? val.get("USERNAME"): "");
+	    str = str.replaceAll("\\{server\\}", (val.get("SERVERNAME") != null)? val.get("SERVERNAME"): "");
 	    
-	    str = ChatColor.translateAlternateColorCodes('&', str);
+	    str = str.replaceAll("(&([a-f0-9]))", "\u00A7$2");
 	    
 	    System.out.println(str);
 	    return str;

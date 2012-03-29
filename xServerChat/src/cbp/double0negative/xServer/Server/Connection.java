@@ -51,14 +51,16 @@ public class Connection extends Thread {
 		if (p.getType() == PacketTypes.PACKET_MESSAGE) {
 			Server.sendPacket(p, this);
 		}
-		else if(p.getType() == PacketTypes.PACKET_SERVER_NAME){
+		else if(p.getType() == PacketTypes.PACKET_CLIENT_CONNECTED){
 			name = (String)p.getArgs();
+			Server.sendPacket(p, this);
 		}
 		else if (p.getType() == PacketTypes.PACKET_STATS_REQ){
 			System.out.println("REQ_STATS");
 			Server.genAndSendStats(this);
 		}
 		else if(p.getType() == PacketTypes.PACKET_CLIENT_DC){
+		    Server.sendPacket(new Packet(PacketTypes.PACKET_CLIENT_DC, name), this);
 			Server.closeConnection(this);
 		}
 		else if(p.getType() == PacketTypes.PACKET_PLAYER_JOIN || p.getType() == PacketTypes.PACKET_PLAYER_LEAVE ||p.getType() == PacketTypes.PACKET_PLAYER_DEATH){
@@ -70,8 +72,7 @@ public class Connection extends Thread {
 
 	public void closeConnection(){
 		open = false;
-
-
+		
 		try{
 			send(new Packet(PacketTypes.PACKET_CC, null));
 			out.close();

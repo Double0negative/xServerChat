@@ -27,8 +27,20 @@ serverName: 'XServer'
 #servers. this allows you to customize the look
 #of your server.
 formats:
-  Login: '[{server}]{user} has joined the game'
-  Logout: '[{server}]{user} has left the game'
-  Message: '[{server}]{user}: {message}'
-  Death: '[{server}]{user} died'
+  Login: '[{server}]{username} has joined the game'
+  Logout: '[{server}]{username} has left the game'
+  Message: '[{server}]{username}: {message}'
+  Death: '[{server}]{username} died'
+  Connect: '&9[xServer]{server} has connected'
+  
+#If you do not want other servers to be able
+#to set their own formats you can override
+#the formats of the messages being sent here
+override:
+  enabled: false
+  Login: '[{server}]{username} has joined the game'
+  Logout: '[{server}]{username} has left the game'
+  Message: '[{server}]{username}: {message}'
+  Death: '[{server}]{username} died'
+  Connect: '&9[xServer]{server} has connected'
 
