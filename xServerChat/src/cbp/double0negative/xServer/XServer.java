@@ -29,7 +29,7 @@ import cbp.double0negative.xServer.util.LogManager;
  */
 public class XServer extends JavaPlugin{
 
-    public static String version = "0.1.13";
+    public static String version = "0.2.6";
     public static ChatColor color = ChatColor.WHITE;
     public static ChatColor seccolor = ChatColor.WHITE;
     public static ChatColor aColor = ChatColor.AQUA;
@@ -91,6 +91,7 @@ public class XServer extends JavaPlugin{
 
 
         if(isHost){
+            LogManager.getInstance().info("THIS SERVER IS HOST");
             startServer();
         }
 
@@ -114,7 +115,8 @@ public class XServer extends JavaPlugin{
             s = " Shutting Down";
         }
         dc();
-        dcServer();
+        if(isHost)
+            dcServer();
 
     }
 
@@ -178,6 +180,7 @@ public class XServer extends JavaPlugin{
         if (sender instanceof Player) {
             player = (Player) sender;
         }
+        
         ChatColor.translateAlternateColorCodes('&', "");	         
         if(cmd.equalsIgnoreCase("xserver") || cmd.equalsIgnoreCase("x")){ 
             if(args[0].equalsIgnoreCase("list")){
@@ -267,8 +270,6 @@ public class XServer extends JavaPlugin{
         }else{
             str = override.get(key);
         }
-        System.out.println(formatoveride);
-        System.out.println(str);
 
         str = str.replaceAll("\\{message\\}",(val.get("MESSAGE") != null)? val.get("MESSAGE"): "");
         str = str.replaceAll("\\{username\\}", (val.get("USERNAME") != null)? val.get("USERNAME"): "");
@@ -276,7 +277,6 @@ public class XServer extends JavaPlugin{
 
         str = str.replaceAll("(&([a-f0-9]))", "\u00A7$2");
 
-        System.out.println(str);
         return str;
     }
 

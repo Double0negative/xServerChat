@@ -1,6 +1,6 @@
 name: xServer
 main: cbp.double0negative.xServer.XServer
-version: 0.1.12
+version: 0.2.6
 
 commands:
   xserver:

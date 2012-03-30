@@ -46,7 +46,7 @@ public class Client extends Thread{
                 //send(new Packet(PacketTypes.PACKET_SERVER_NAME,XServer.serverName ));
                 send(new Packet(PacketTypes.PACKET_CLIENT_CONNECTED,XServer.serverName));
                 sendLocalMessage(XServer.aColor+"[XServer]Connected to host");
-                LogManager.getInstance().info("Client connection to  "+ip+":"+port);
+                LogManager.getInstance().info("Client connected to "+ip+":"+port);
 
 
             }catch(Exception e){if(!error){LogManager.getInstance().error("Failed to create Socket - Client");}error=true;}
@@ -80,7 +80,7 @@ public class Client extends Thread{
                 open = false;
             }
             else if(p.getType() == PacketTypes.PACKET_PLAYER_JOIN || p.getType() == PacketTypes.PACKET_PLAYER_LEAVE){
-                String s = (p.getType() == PacketTypes.PACKET_PLAYER_JOIN)? "LOGOUT": "LOGIN";
+                String s = (p.getType() == PacketTypes.PACKET_PLAYER_JOIN)? "LOGIN": "LOGOUT";
                 sendLocalMessage(XServer.format(p.getFormat(),(HashMap<String, String>) p.getArgs(), s));
             }
             else if(p.getType() == PacketTypes.PACKET_PLAYER_DEATH){
@@ -89,7 +89,7 @@ public class Client extends Thread{
             else if(p.getType() == PacketTypes.PACKET_CLIENT_CONNECTED){
                 HashMap<String,String> form =new HashMap<String,String>();
                 form.put("SERVERNAME", (String) p.getArgs());
-                sendLocalMessage(XServer.format(p.getFormat(), form, "CONNECTI"));
+                sendLocalMessage(XServer.format(p.getFormat(), form, "CONNECT"));
             }
             else if(p.getType() == PacketTypes.PACKET_CLIENT_DC){
                 HashMap<String,String> form =new HashMap<String,String>();
@@ -110,7 +110,6 @@ public class Client extends Thread{
         f.put("SERVERNAME",XServer.serverName );
         f.put("USERNAME",user);
 
-
         send(new Packet(PacketTypes.PACKET_MESSAGE, f));
     }
 
@@ -119,16 +118,14 @@ public class Client extends Thread{
             p.setFormat(XServer.formats);
             out = new ObjectOutputStream(skt.getOutputStream());
             out.writeObject(p);
-
-
         }
-        catch(Exception e){LogManager.getInstance().error("Couldn't send message");
+        catch(Exception e){LogManager.getInstance().error("Couldn't send packet");
         }
     }
 
     public void closeConnection(){
 
-        send(new Packet(PacketTypes.PACKET_CLIENT_DC,null));
+        send(new Packet(PacketTypes.PACKET_CLIENT_DC,XServer.serverName));
         try{
             in.close();
             out.close();

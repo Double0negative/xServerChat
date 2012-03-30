@@ -48,10 +48,8 @@ public class Connection extends Thread {
     }
 
     public void parse(Packet p) {
-        if (p.getType() == PacketTypes.PACKET_MESSAGE) {
-            Server.sendPacket(p, this);
-        }
-        else if(p.getType() == PacketTypes.PACKET_CLIENT_CONNECTED){
+
+        if(p.getType() == PacketTypes.PACKET_CLIENT_CONNECTED){
             name = (String)p.getArgs();
             Server.sendPacket(p, this);
         }
@@ -60,10 +58,10 @@ public class Connection extends Thread {
             Server.genAndSendStats(this);
         }
         else if(p.getType() == PacketTypes.PACKET_CLIENT_DC){
-            Server.sendPacket(new Packet(PacketTypes.PACKET_CLIENT_DC, name), this);
+            Server.sendPacket(p, this);
             Server.closeConnection(this);
         }
-        else if(p.getType() == PacketTypes.PACKET_PLAYER_JOIN || p.getType() == PacketTypes.PACKET_PLAYER_LEAVE ||p.getType() == PacketTypes.PACKET_PLAYER_DEATH){
+        else {
             Server.sendPacket(p, this);
         }
 

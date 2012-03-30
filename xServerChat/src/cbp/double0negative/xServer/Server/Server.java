@@ -31,7 +31,7 @@ public class Server extends Thread{
 
             try {
 
-                LogManager.getInstance().info("Ready for connections on port "+XServer.port);
+               // LogManager.getInstance().info("Ready for connections on port "+XServer.port);
                 skt = skt2.accept();
                 LogManager.getInstance().info("Connection made on port "+XServer.port);
 
@@ -70,7 +70,6 @@ public class Server extends Thread{
             Connection i = clients.get(a);
             stats[a][0] = i.getClientName();
             stats[a][1] = i.isOpen();
-            System.out.println(i.getClientName()+i.isOpen());
             stats[a][2] = i.getSent();
             stats[a][3] = i.getRecived();
         }
@@ -83,7 +82,7 @@ public class Server extends Thread{
         try{
             for(Connection c:clients){
                 c.closeConnection();
-                c.send(new Packet(PacketTypes.PACKET_SERVER_DC, null));
+                c.send(new Packet(PacketTypes.PACKET_SERVER_DC, "SERC"));
             }
             for(int a = 0; a<clients.size(); a++){
                 clients.remove(a);
