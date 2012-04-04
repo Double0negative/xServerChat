@@ -181,7 +181,6 @@ public class XServer extends JavaPlugin{
             player = (Player) sender;
         }
         
-        ChatColor.translateAlternateColorCodes('&', "");	         
         if(cmd.equalsIgnoreCase("xserver") || cmd.equalsIgnoreCase("x")){ 
             if(args[0].equalsIgnoreCase("list")){
                 stat_req = player;
@@ -276,7 +275,7 @@ public class XServer extends JavaPlugin{
         str = str.replaceAll("\\{server\\}", (val.get("SERVERNAME") != null)? val.get("SERVERNAME"): "");
 
         str = str.replaceAll("(&([a-f0-9]))", "\u00A7$2");
-
+       
         return str;
     }
 
