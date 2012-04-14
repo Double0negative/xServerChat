@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="C:/Users/Drew/Downloads/craftbukkit-1.2.4-R0.1-20120323.185302-18.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Drew/Downloads/Vault.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

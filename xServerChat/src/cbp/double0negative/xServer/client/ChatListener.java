@@ -25,7 +25,8 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void handleChat(PlayerChatEvent event) {
-
+        if(event.isCancelled())
+            return;
         c.sendMessage(event.getMessage(), event.getPlayer().getDisplayName());
 
     }
