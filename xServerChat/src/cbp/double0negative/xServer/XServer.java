@@ -3,12 +3,16 @@ package cbp.double0negative.xServer;
 import java.io.File;
 import java.util.HashMap;
 
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.ChatColor;
+
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 
 import cbp.double0negative.xServer.Server.Server;
@@ -53,7 +57,7 @@ public class XServer extends JavaPlugin{
     public static HashMap<String, String>formats = new HashMap<String,String>();
     public static HashMap<String, String>override = new HashMap<String,String>();
     private static boolean formatoveride = false;
-
+    PermissionManager perms = PermissionsEx.getPermissionManager();
 
     public void onEnable(){
 
@@ -61,7 +65,6 @@ public class XServer extends JavaPlugin{
         LogManager log = LogManager.getInstance();
         log.setup(this);
         log.info("XServer Version "+version+" Initializing");
-
 
         getConfig().options().copyDefaults(true);
         this.saveDefaultConfig();
@@ -274,7 +277,7 @@ public class XServer extends JavaPlugin{
         str = str.replaceAll("\\{username\\}", (val.get("USERNAME") != null)? val.get("USERNAME"): "");
         str = str.replaceAll("\\{server\\}", (val.get("SERVERNAME") != null)? val.get("SERVERNAME"): "");
 
-        str = str.replaceAll("(&([a-f0-9]))", "\u00A7$2");
+       str =str.replaceAll("(&([a-fk-or0-9]))", "\u00A7$2");
        
         return str;
     }
