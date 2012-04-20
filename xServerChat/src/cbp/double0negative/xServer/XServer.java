@@ -28,7 +28,6 @@ import cbp.double0negative.xServer.util.LogManager;
  * 
  * Authors:
  * @author Drew  [ https://github.com/Double0negative ]
- * @author James [ https://github.com/James-Buchanan ]
  * 
  */
 public class XServer extends JavaPlugin{
