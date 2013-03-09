@@ -1,7 +1,7 @@
 name: xServer
 main: cbp.double0negative.xServer.XServer
-version: 0.2.7
-
+authors: [double0negative, MCForger]
+version: 0
 commands:
   xserver:
     description: Stats and controls for xserver
