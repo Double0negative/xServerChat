@@ -1,0 +1,9 @@
+name: xServer
+main: cbp.double0negative.xServer.XServer
+version: 0.2.7
+
+commands:
+  xserver:
+    description: Stats and controls for xserver
+    usage: /XServer command or /x command
+    aliases: [x]
