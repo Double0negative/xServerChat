@@ -8,9 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.ChatColor;
 
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 import cbp.double0negative.xServer.Server.Server;
 import cbp.double0negative.xServer.client.ChatListener;
 import cbp.double0negative.xServer.client.Client;
@@ -54,7 +51,6 @@ public class XServer extends JavaPlugin
 	public static HashMap<String, String> formats = new HashMap<String, String>();
 	public static HashMap<String, String> override = new HashMap<String, String>();
 	private static boolean formatoveride = false;
-	PermissionManager perms = PermissionsEx.getPermissionManager();
 
 	public void onEnable()
 	{

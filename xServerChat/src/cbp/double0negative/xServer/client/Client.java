@@ -7,8 +7,6 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import cbp.double0negative.xServer.XServer;
 import cbp.double0negative.xServer.packets.Packet;
@@ -29,7 +27,6 @@ public class Client extends Thread
 	private int errLevel = 0;
 	private long sleep = 2000;
 	private Plugin p;
-	PermissionManager perms = PermissionsEx.getPermissionManager();
 
 	public Client(Plugin p, String ip, int port)
 	{
@@ -155,10 +152,7 @@ public class Client extends Thread
 	{
 		for (Player player : p.getServer().getOnlinePlayers())
 		{
-			if (perms.has(player, "xserver.message.recive"))
-			{
 				player.sendMessage(s);
-			}
 		}
 	}
 
