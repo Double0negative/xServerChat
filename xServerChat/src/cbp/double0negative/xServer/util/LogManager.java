@@ -2,33 +2,44 @@ package cbp.double0negative.xServer.util;
 
 import java.util.logging.Logger;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class LogManager {
+public class LogManager
+{
 	private static LogManager _instance = new LogManager();
 	private Logger log;
+	@SuppressWarnings("unused")
 	private JavaPlugin p;
 	private String pre = "";
-	private LogManager(){
+
+	private LogManager()
+	{
 	}
-	public void setup(JavaPlugin p){
+
+	public void setup(JavaPlugin p)
+	{
 		this.p = p;
 		log = p.getLogger();
 
 	}
-	
-	public static LogManager getInstance(){
+
+	public static LogManager getInstance()
+	{
 		return _instance;
 	}
-	
-	public void info(String msg){
+
+	public void info(String msg)
+	{
 		log.info(pre + msg);
 	}
-	public void warn(String msg){
+
+	public void warn(String msg)
+	{
 		log.warning(pre + msg);
 	}
-	public void error(String msg){
+
+	public void error(String msg)
+	{
 		log.severe(pre + msg);
 	}
 }
