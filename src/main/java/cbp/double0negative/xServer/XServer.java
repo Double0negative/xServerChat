@@ -197,7 +197,7 @@ public class XServer extends JavaPlugin
 				stat_req = player;
 				getStats();
 			}
-			if (player.isOp())
+			if (player.hasPermission("xserver.admin"))
 			{
 				if (args[0].equalsIgnoreCase("dc")
 						|| args[0].equalsIgnoreCase("disconnect"))

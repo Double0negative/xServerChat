@@ -7,3 +7,10 @@ commands:
     description: Stats and controls for xserver
     usage: /XServer command or /x command
     aliases: [x]
+permissions:
+  xserver.message.receive:
+    description: Allows the player to receive xServerChat messages
+    default: true
+  xserver.admin:
+    description: Allows the player to configure xServerChat
+    default: op

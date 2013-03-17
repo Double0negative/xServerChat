@@ -151,7 +151,9 @@ public class Client extends Thread
 	{
 		for (Player player : p.getServer().getOnlinePlayers())
 		{
+			if (player.hasPermission("xserver.message.receive")) {
 				player.sendMessage(s);
+			}
 		}
 	}
 
