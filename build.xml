@@ -1,0 +1,49 @@
+<project name="Cross-Server Chat" default="plugin" basedir=".">
+	<property name="srcplgn" location="src/main/java"/>
+	<property name="srcdedi" location="src/dedicated/java/"/>
+	<property name="res" location="target/classes/"/>
+	<property name="build" location="build"/>
+	<property name="dist"  location="out"/>
+	<property name="libs"  location="libs"/>
+	
+  <path id="classpath">
+  	<fileset dir="${libs}" includes="**/*.jar"/>
+  </path>
+
+  <target name="init">
+  	<delete dir="${build}"/>
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile-plgn" depends="init" description="compile the source " >
+    <javac srcdir="${srcplgn}" destdir="${build}" classpathref="classpath">
+   	<classpath id="classpath">
+   		<pathelement path="${classpath}"/>
+   		<fileset dir="${libs}">
+   			<include name="*.jar"/>
+   		</fileset>
+   	</classpath>
+    </javac>
+   	<copy todir="${build}">
+    	<fileset dir="${res}"/>
+   	</copy>
+  </target>
+
+  <target name="plugin" depends="compile-plgn" description="generate the distribution" >
+    <jar jarfile="${dist}/xServerChat.jar" basedir="${build}"/>
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="compile-dedi" depends="init" description="compile the source " >
+    <javac srcdir="${srcdedi}" destdir="${build}" classpathref="classpath"/>
+  </target>
+
+  <target name="dedi" depends="compile-dedi" description="generate the distribution" >
+	<jar jarfile="${dist}/xServerChat-DEDICATED_SERVER.jar" basedir="${build}">
+		<manifest>
+			<attribute name="Main-Class" value="cbp.double0negative.xServer.XServer"/>
+		</manifest>
+	</jar>
+    <delete dir="${build}"/>
+  </target>
+</project>
