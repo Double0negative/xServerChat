@@ -1,0 +1,19 @@
+name: xServer
+main: cbp.double0negative.xServer.XServer
+authors: [double0negative, MCForger, Stoolbend]
+version: 0.2.7
+commands:
+  xserver:
+    description: Stats and controls for xserver
+    usage: /XServer command or /x command
+    aliases: [x]
+permissions:
+  xserver.message.receive:
+    description: Allows the player to receive xServerChat messages
+    default: true
+  xserver.message.send:
+    description: Allows the player to send xServerChat messages
+    default: true
+  xserver.admin:
+    description: Allows the player to configure xServerChat
+    default: op
