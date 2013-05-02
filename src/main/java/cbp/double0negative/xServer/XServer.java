@@ -1,7 +1,13 @@
 package cbp.double0negative.xServer;
 
 import java.util.HashMap;
+import java.util.List;
 
+import net.milkbowl.vault.permission.Permission;
+
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -27,7 +33,8 @@ import cbp.double0negative.xServer.util.LogManager;
 public class XServer extends JavaPlugin
 {
 
-	public static String version = "0.2.6";
+	public static String version;
+	public static List<String> authors;
 	public static ChatColor color = ChatColor.WHITE;
 	public static ChatColor seccolor = ChatColor.WHITE;
 	public static ChatColor aColor = ChatColor.AQUA;
@@ -51,6 +58,10 @@ public class XServer extends JavaPlugin
 	public static HashMap<String, String> formats = new HashMap<String, String>();
 	public static HashMap<String, String> override = new HashMap<String, String>();
 	private static boolean formatoveride = false;
+	private static int permsMode = 0;
+	LogManager log = LogManager.getInstance();
+	static Permission permission = null;
+	private PluginDescriptionFile info;
 
 	public void onEnable()
 	{
@@ -58,7 +69,11 @@ public class XServer extends JavaPlugin
 		netActive = true;
 		LogManager log = LogManager.getInstance();
 		log.setup(this);
+		info = this.getDescription();
+		version = info.getVersion();
+		authors = info.getAuthors();
 		log.info("XServer Version " + version + " Initializing");
+		log.info("Created by: "+authors.toString());
 
 		getConfig().options().copyDefaults(true);
 		this.saveDefaultConfig();
@@ -83,6 +98,8 @@ public class XServer extends JavaPlugin
 		override.put("CONNECT", getConfig().getString("override.Connect"));
 		override.put("DISCONNECT", getConfig().getString("override.Disconnect"));
 
+		setupPermissions();
+		
 		if (isHost)
 		{
 			LogManager.getInstance().info("THIS SERVER IS HOST");
@@ -192,78 +209,112 @@ public class XServer extends JavaPlugin
 
 		if (cmd.equalsIgnoreCase("xserver") || cmd.equalsIgnoreCase("x"))
 		{
-			if (args[0].equalsIgnoreCase("list"))
+			if (args.length == 0)
 			{
-				stat_req = player;
-				getStats();
+				if (XServer.checkPerm(player, "xserver.admin"))
+				{
+					player.sendMessage(xpre + ChatColor.YELLOW +"Version: " + version);
+					player.sendMessage(xpre + ChatColor.GREEN +"Made by: "+authors.toString());
+					player.sendMessage(xpre + "/x list - List packets sent/received");
+					player.sendMessage(xpre + "/x dc - Disconnect from the host");
+					player.sendMessage(xpre + "/x rc - Connect to the host");
+					player.sendMessage(xpre + "/x v - Display the version");
+					player.sendMessage(xpre + "/x host - List commands for host servers");
+					return true;
+				}
+				else
+				{
+					player.sendMessage(xpre + "Version: " + version);
+					return true;
+				}
 			}
-			if (player.hasPermission("xserver.admin"))
+			if (XServer.checkPerm(player, "xserver.admin"))
 			{
-				if (args[0].equalsIgnoreCase("dc")
-						|| args[0].equalsIgnoreCase("disconnect"))
+				if (args[0].equalsIgnoreCase("list"))
+				{
+					stat_req = player;
+					getStats();
+					return true;
+				}
+				if (args[0].equalsIgnoreCase("dc") || args[0].equalsIgnoreCase("disconnect"))
 				{
 					if (dc)
 					{
 						player.sendMessage(xpre + "Already Disconnected!");
-					} else
+						return true;
+					} 
+					else
 					{
 						dc();
 						dc = true;
 
-						player.sendMessage(xpre
-								+ "Disconnected. You will be reconnected on next restart or with /x rc");
+						player.sendMessage(xpre	+ "Disconnected. You will be reconnected on next restart or with /x rc");
+						return true;
 					}
 				}
-				if (args[0].equalsIgnoreCase("rc")
-						|| args[0].equalsIgnoreCase("reload"))
+				if (args[0].equalsIgnoreCase("rc") || args[0].equalsIgnoreCase("reload"))
 				{
 					reloadClient();
 					player.sendMessage(xpre + "Client Restarted");
+					return true;
 				}
-				if (args[0].equalsIgnoreCase("v")
-						|| args[0].equalsIgnoreCase("version"))
+				if (args[0].equalsIgnoreCase("v") || args[0].equalsIgnoreCase("version"))
 				{
-					player.sendMessage(xpre + "Version: " + version);
+					player.sendMessage(xpre + ChatColor.YELLOW +"Version: " + version);
+					return true;
 				}
 
-				if (args[0].equalsIgnoreCase("host")
-						|| args[0].equalsIgnoreCase("server"))
+				if (args[0].equalsIgnoreCase("host") || args[0].equalsIgnoreCase("server"))
 				{
-					if (args[1].equalsIgnoreCase("dc")
-							|| args[1].equalsIgnoreCase("disconnect"))
+					if(args.length == 1)
+					{
+						player.sendMessage(xpre + "Host Server Commands");
+						player.sendMessage(xpre + "/x host dc - Disconnect all servers & shutdown the host");
+						player.sendMessage(xpre + "/x host rc - Start the host & make available to other servers");
+						return true;
+					}
+					if (args[1].equalsIgnoreCase("dc") || args[1].equalsIgnoreCase("disconnect"))
 					{
 						if (!isHost)
 						{
 							player.sendMessage(xpre + "You are not host!");
-						} else if (hostdc)
+							return true;
+						}
+						else if (hostdc)
 						{
 							player.sendMessage(xpre + "Already Disconnected!");
-						} else
+							return true;
+						} 
+						else
 						{
 							hostdc = true;
 							dcServer();
-							player.sendMessage(xpre
-									+ "Server Shutdown! Restarting on next restart or with /x host rc");
+							player.sendMessage(xpre + "Server Shutdown! Restarting on next restart or with /x host rc");
+							return true;
 						}
 					}
-					if (args[1].equalsIgnoreCase("rc")
-							|| args[1].equalsIgnoreCase("reload")
-							|| args[1].equalsIgnoreCase("reconnect"))
+					if (args[1].equalsIgnoreCase("rc") || args[1].equalsIgnoreCase("reload") || args[1].equalsIgnoreCase("reconnect"))
 					{
 						if (!isHost)
 						{
 							player.sendMessage(xpre + "You are not host!");
-						} else
+							return true;
+						}
+						else
 						{
 							reloadServer();
 							player.sendMessage(xpre + "Server Restarted!");
+							return true;
 						}
 
 					}
 				}
 			}
-
-			return true;
+			else
+			{
+				player.sendMessage(xpre + ChatColor.RED + "You don't have permission to do that!");
+				return true;
+			}
 		}
 		return false;
 	}
@@ -322,5 +373,55 @@ public class XServer extends JavaPlugin
 
 		return str;
 	}
+
+	private void setupPermissions()
+	{
+		// Check for Vault
+		Plugin vltpl = this.getServer().getPluginManager().getPlugin("Vault");
+
+		if (!(vltpl == null))
+		{
+			RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+			if (permissionProvider != null)
+			{
+				permission = permissionProvider.getProvider();
+				log.info("Hooked into Vault for Permissions!");
+				permsMode = 1;
+			}
+			else
+			{
+				log.error("Couldn't hook into Vault for permissions!");
+				log.error("Using Bukkit Perms (Superperms) instead");
+				permsMode = 2;
+			}
+		}
+		else
+		{
+			// Vault not found. Use Superperms instead
+			log.info("Vault was not found :(");
+			log.info("Using Bukkit Perms (Superperms)");
+			permsMode = 2;
+		}
+	}
+	   
+	   public static boolean checkPerm(Player plr, String node)
+	   {
+		   if(permsMode == 1)
+		   {
+			   // Mode is Vault
+			   return permission.has(plr, node);
+		   }
+		   else if(permsMode == 2)
+		   {
+			   // Mode is SuperPerms
+			   return plr.hasPermission(node);
+		   }
+		   else if(plr.isOp())
+		   {
+			   // Or Player is Op
+			   return true;
+		   }
+		   return false;
+	   }
 
 }

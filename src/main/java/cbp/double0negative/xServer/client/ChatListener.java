@@ -30,10 +30,12 @@ public class ChatListener implements Listener
 	{
 		if (event.isCancelled())
 			return;
-		String msg = event.getMessage().replaceAll("(&([a-fk-or0-9]))",
-				"\u00A7$2");
-		event.setMessage(msg);
-		c.sendMessage(event.getMessage(), event.getPlayer().getDisplayName());
+		if (XServer.checkPerm(event.getPlayer(), "xserver.message.send"))
+		{
+			String msg = event.getMessage().replaceAll("(&([a-fk-or0-9]))", "\u00A7$2");
+			event.setMessage(msg);
+			c.sendMessage(event.getMessage(), event.getPlayer().getDisplayName());
+		}
 
 	}
 
