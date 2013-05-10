@@ -106,14 +106,7 @@ public class Client extends Thread
 			if (p.getType() == PacketTypes.PACKET_MESSAGE)
 			{
 				HashMap<String, String> form = (HashMap<String, String>) p.getArgs();
-				Player[] players = Bukkit.getOnlinePlayers();
-				for (Player op : players)
-				{
-					if (XServer.checkPerm(op, "xserver.message.receive"))
-					{
-						sendLocalMessage(XServer.format(p.getFormat(), form, "MESSAGE"));
-					}
-				}
+				sendLocalMessage(XServer.format(p.getFormat(), form, "MESSAGE"));
 			} else if (p.getType() == PacketTypes.PACKET_STATS_REPLY)
 			{
 				XServer.msgStats((Object[][]) p.getArgs());
