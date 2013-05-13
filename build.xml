@@ -1,6 +1,6 @@
 <project name="Cross-Server Chat" default="plugin" basedir=".">
 	<property name="srcplgn" location="src/main/java"/>
-	<property name="srcdedi" location="src/dedicated/java/"/>
+	<property name="srcdedi" location="src/dedicated/main/java/"/>
 	<property name="res" location="target/classes/"/>
 	<property name="build" location="build"/>
 	<property name="dist"  location="out"/>
