@@ -8,6 +8,8 @@ import cbp.double0negative.xServer.XServer;
 import cbp.double0negative.xServer.packets.Packet;
 import cbp.double0negative.xServer.packets.PacketTypes;
 import cbp.double0negative.xServer.util.LogManager;
+import cbp.double0negative.xServer.Server.Connection;
+
 
 public class Server extends Thread
 {
@@ -112,9 +114,16 @@ public class Server extends Thread
 	public static void closeConnection(Connection c)
 	{
 		c.closeConnection();
+		c.send(new Packet(PacketTypes.PACKET_SERVER_DC, "SERC"));
+		clients.remove(c);
 		/*
-		 * for(int a = 0; a<clients.size(); a++){ if(!clients.get(a).isOpen()){
-		 * clients.remove(a); } }
-		 */
+		for(int a = 0; a<clients.size(); a++)
+		{
+			if(!clients.get(a).isOpen())
+			{
+				clients.remove(a);
+			}
+		}
+		*/
 	}
 }

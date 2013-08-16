@@ -23,7 +23,7 @@ import cbp.double0negative.xServer.util.LogManager;
 public class XServer
 {
 
-	public static String version = "0.2.6";
+	public static String version = "0.2.7";
 	public static String pre = "[XServer] ";
 	public static String xpre = pre;
 	public static String ip;
@@ -157,7 +157,7 @@ public class XServer
 	public static void msgStats(Object[][] stats)
 	{
 		System.out.println(
-				 "--------------XServer Chat Stats----------------");
+				 "-= xServer Chat - Dedicated Server v"+version+" =-");
 		System.out.println(
 				 "Server      Active      Packets Sent            Packets Recived");
 		for (Object[] o : stats)
