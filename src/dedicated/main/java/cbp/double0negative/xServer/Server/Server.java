@@ -25,8 +25,11 @@ public class Server extends Thread
 		try
 		{
 			skt2 = new ServerSocket(XServer.port);
-		} catch (Exception e)
+			LogManager.info("[SERVER] Connections on port "+XServer.port + " please");
+		}
+		catch (Exception e)
 		{
+			LogManager.error("[SERVER] Exception in server - could not open port " + XServer.port);
 		}
 		while (!closed)
 		{
@@ -34,13 +37,11 @@ public class Server extends Thread
 			try
 			{
 
-				LogManager.info("Ready for connections on port "+XServer.port);
+				LogManager.info("[SERVER] Awaiting connection...");
 				skt = skt2.accept();
-				LogManager.info(
-						"Connection made on port " + XServer.port);
+				LogManager.info("[SERVER] Connection made!");
 
 				Connection c = new Connection(skt);
-				clients.add(c);
 				c.start();
 				/*
 				 * while(skt.isConnected()){ try{ Packet packet =
@@ -50,7 +51,7 @@ public class Server extends Thread
 
 			} catch (Exception e)
 			{
-				LogManager.error("Exception in server");
+				LogManager.error("[SERVER] Exception in server");
 				e.printStackTrace();
 				try
 				{
@@ -60,34 +61,55 @@ public class Server extends Thread
 				}
 			}
 		}
-
+		interrupt();
 	}
 
 	public static void sendPacket(Packet p, Connection connection)
 	{
+		//System.out.println("Sending packet " + p.toString());
 		for (Connection c : clients)
 		{
+			//System.out.println("Sending packet to: " + c.getClientName());
 			if (c != connection)
 			{
 				c.send(p);
 			}
 		}
+		p = null;
+	}
+	
+	public static void checkIfDupe(Packet p, Connection c)
+	{
+		for (Connection cl : clients)
+		{
+			if(c.getName().equalsIgnoreCase(cl.getName()))
+			{
+				// Idea here is to close the new connection.
+				// might work better other way round however.
+				System.out.println("[SERVER] Duplicate server name detected!");
+				c.closeConnection();
+			}
+		}
+		clients.add(c);
+		sendPacket(p, c);
+		p = null;
 	}
 
 	public static void genAndSendStats(Connection c)
 	{
-		System.out.println("Creating Stats");
+		System.out.println("[SERVER] Creating Stats");
 		Object[][] stats = new Object[clients.size()][4];
 		for (int a = 0; a < clients.size(); a++)
 		{
 			Connection i = clients.get(a);
-			stats[a][0] = i.getClientName();
+			stats[a][0] = a + " " + i.getClientName();
 			stats[a][1] = i.isOpen();
 			stats[a][2] = i.getSent();
 			stats[a][3] = i.getRecived();
 		}
-		System.out.println("Sending stats");
+		System.out.println("[SERVER] Sending stats");
 		c.send(new Packet(PacketTypes.PACKET_STATS_REPLY, stats));
+		stats = null;
 	}
 
 	public void closeConnections()
@@ -97,24 +119,25 @@ public class Server extends Thread
 		{
 			for (Connection c : clients)
 			{
-				c.closeConnection();
 				c.send(new Packet(PacketTypes.PACKET_SERVER_DC, "SERC"));
-			}
-			for (int a = 0; a < clients.size(); a++)
-			{
-				clients.remove(a);
+				c.closeConnection();
+				clients.remove(c);
 			}
 			skt2.close();
 			skt.close();
-		} catch (Exception e)
+			skt = null;
+			skt2 = null;
+		}
+		catch (Exception e)
 		{
+			LogManager.error("[SERVER] Could not close connection!");
 		}
 	}
 
 	public static void closeConnection(Connection c)
 	{
-		c.closeConnection();
 		c.send(new Packet(PacketTypes.PACKET_SERVER_DC, "SERC"));
+		c.closeConnection();
 		clients.remove(c);
 		/*
 		for(int a = 0; a<clients.size(); a++)

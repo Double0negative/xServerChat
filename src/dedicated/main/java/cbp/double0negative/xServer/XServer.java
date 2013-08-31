@@ -23,7 +23,7 @@ import cbp.double0negative.xServer.util.LogManager;
 public class XServer
 {
 
-	public static String version = "0.2.7";
+	public static String version = "0.2.8";
 	public static String pre = "[XServer] ";
 	public static String xpre = pre;
 	public static String ip;
