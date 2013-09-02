@@ -16,13 +16,12 @@ public class Connection extends Thread
 	private boolean open = true;
 	private String name = "";
 	private int sent = 0;
-	private int recived = 0;
+	private int received = 0;
 
 	public Connection(Socket skt2)
 	{
 
 		this.skt = skt2;
-		System.out.println("Adding Client");
 		open = true;
 	}
 
@@ -39,7 +38,8 @@ public class Connection extends Thread
 			{
 			}
 		}
-
+		System.out.println("[THREAD] " + name + " is having its thread closed!");
+		interrupt();
 	}
 
 	public void send(Packet p)
@@ -48,7 +48,7 @@ public class Connection extends Thread
 		{
 			out = new ObjectOutputStream(skt.getOutputStream());
 			out.writeObject(p);
-			recived++;
+			received++;
 		} catch (Exception e)
 		{
 		}
@@ -60,16 +60,19 @@ public class Connection extends Thread
 		if (p.getType() == PacketTypes.PACKET_CLIENT_CONNECTED)
 		{
 			name = (String) p.getArgs();
-			Server.sendPacket(p, this);
-		} else if (p.getType() == PacketTypes.PACKET_STATS_REQ)
+			System.out.println("[THREAD] " + name + " has connected! Thread ID: " + this.getId());
+			Server.checkIfDupe(p, this);
+		}
+		else if (p.getType() == PacketTypes.PACKET_STATS_REQ)
 		{
-			System.out.println("REQ_STATS");
+			System.out.println("[THREAD] " + name + " requested stats");
 			Server.genAndSendStats(this);
-		} else if (p.getType() == PacketTypes.PACKET_CLIENT_DC)
+		}
+		else if (p.getType() == PacketTypes.PACKET_CLIENT_DC)
 		{
-			Server.sendPacket(p, this);
 			Server.closeConnection(this);
-		} else
+		}
+		else
 		{
 			Server.sendPacket(p, this);
 		}
@@ -79,14 +82,16 @@ public class Connection extends Thread
 	public void closeConnection()
 	{
 		open = false;
-
 		try
 		{
 			send(new Packet(PacketTypes.PACKET_CC, null));
 			out.close();
 			in.close();
 			skt.close();
-		} catch (Exception e)
+			sent = 0;
+			received = 0;
+		}
+		catch (Exception e)
 		{
 		}
 	}
@@ -108,6 +113,6 @@ public class Connection extends Thread
 
 	public int getRecived()
 	{
-		return recived;
+		return received;
 	}
 }
